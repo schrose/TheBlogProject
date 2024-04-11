@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace TheBlogProject.Models;
 
 public class Blog
 {
     public int Id { get; set; }
-    public int AuthorId { get; set; }
+    public string AuthorId { get; set; }
     
     [Required]
     [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
@@ -30,4 +31,8 @@ public class Blog
     
     [NotMapped]
     public IFormFile Image { get; set; }
+    
+    // Navigation Properties
+    public virtual IdentityUser Author { get; set; }
+    public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 }

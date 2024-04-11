@@ -39,6 +39,8 @@ public class Post
     [Display(Name = "Updated Date")]
     public DateTime? Updated { get; set; }
 
+    public bool IsReady { get; set; }
+    
     public string Slug { get; set; }
 
     public byte[] ImageData { get; set; }

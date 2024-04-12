@@ -14,6 +14,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Had to add IServiceCollection.AddRazorPages() was not working without this line 18.
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

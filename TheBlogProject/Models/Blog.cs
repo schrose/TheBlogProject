@@ -33,6 +33,7 @@ public class Blog
     public IFormFile Image { get; set; }
     
     // Navigation Properties
+    [Display(Name = "Blog User")]
     public virtual BlogUser BlogUser { get; set; }
     public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
 }

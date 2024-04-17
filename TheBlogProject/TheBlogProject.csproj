@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
+<!--TODO: Uncomment Nullable property to enable nullable reference types and Migrate/Update-Database-->
+<!--        <Nullable>enable</Nullable>-->
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-TheBlogProject-79F4E136-65BE-4D9C-8BA4-357BD3ECB3D8</UserSecretsId>
     </PropertyGroup>

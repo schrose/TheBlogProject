@@ -25,12 +25,13 @@ public class Blog
     public DateTime? Updated { get; set; }
     
     [Display(Name = "Blog Image")]
-    public byte[] ImageData { get; set; }
+    public byte[]? ImageData { get; set; }
+    
     [Display(Name = "Image Type")]
     public string ImageType { get; set; }
     
     [NotMapped]
-    public IFormFile Image { get; set; }
+    public IFormFile? Image { get; set; }
      
     // Navigation Properties
     [Display(Name = "Author")]

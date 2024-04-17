@@ -164,7 +164,6 @@ namespace TheBlogProject.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Created")
@@ -176,11 +175,9 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ImageType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -211,7 +208,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -222,7 +218,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FacebookUrl")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -232,7 +227,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("LastName")
@@ -267,7 +261,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TwitterUrl")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -300,7 +293,6 @@ namespace TheBlogProject.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Body")
@@ -318,7 +310,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModeratedBody")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -326,7 +317,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ModeratorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PostId")
@@ -363,7 +353,6 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
@@ -374,18 +363,15 @@ namespace TheBlogProject.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ImageType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReadyStatus")
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -414,7 +400,6 @@ namespace TheBlogProject.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PostId")
@@ -489,9 +474,7 @@ namespace TheBlogProject.Data.Migrations
                 {
                     b.HasOne("TheBlogProject.Models.BlogUser", "BlogUser")
                         .WithMany("Blogs")
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.Navigation("BlogUser");
                 });
@@ -500,15 +483,11 @@ namespace TheBlogProject.Data.Migrations
                 {
                     b.HasOne("TheBlogProject.Models.BlogUser", "BlogUser")
                         .WithMany()
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.HasOne("TheBlogProject.Models.BlogUser", "Moderator")
                         .WithMany()
-                        .HasForeignKey("ModeratorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ModeratorId");
 
                     b.HasOne("TheBlogProject.Models.Post", "Post")
                         .WithMany("Comments")
@@ -533,9 +512,7 @@ namespace TheBlogProject.Data.Migrations
 
                     b.HasOne("TheBlogProject.Models.BlogUser", "BlogUser")
                         .WithMany("Posts")
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.Navigation("Blog");
 
@@ -546,9 +523,7 @@ namespace TheBlogProject.Data.Migrations
                 {
                     b.HasOne("TheBlogProject.Models.BlogUser", "BlogUser")
                         .WithMany()
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.HasOne("TheBlogProject.Models.Post", "Post")
                         .WithMany("Tags")

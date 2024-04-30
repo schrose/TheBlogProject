@@ -1,3 +1,4 @@
+using System.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
@@ -24,6 +25,9 @@ builder.Services.AddControllersWithViews();
 
 // Register custom service classes
 builder.Services.AddScoped<DataService>();
+builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("AuthMessageSenderOptions"));
+
 
 var app = builder.Build();
 var dataService = app.Services

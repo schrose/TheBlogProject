@@ -6,42 +6,33 @@ using TheBlogProject.Models;
 
 namespace TheBlogProject.Services;
 
-public class DataService
+public class DataService(
+    ApplicationDbContext dbContext,
+    RoleManager<IdentityRole> roleManager,
+    UserManager<BlogUser> userManager)
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<BlogUser> _userManager;
-
-    public DataService(ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager, UserManager<BlogUser> userManager)
-    {
-        _dbContext = dbContext;
-        _roleManager = roleManager;
-        _userManager = userManager;
-    }
-
-    
     public async Task ManageDataAsync()
     {
-        await _dbContext.Database.MigrateAsync();
+        await dbContext.Database.MigrateAsync();
         await SeedRolesAsync();
         await SeedUsersAsync();
     }
 
     private async Task SeedRolesAsync()
     {
-        if (_dbContext.Roles.Any())
+        if (dbContext.Roles.Any())
         {
             return;
         }
         foreach (var role in Enum.GetNames(typeof(BlogRole)))
         {
-           await _roleManager.CreateAsync(new IdentityRole(role));
+           await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
     
     private async Task SeedUsersAsync()
     {
-        if (_dbContext.Users.Any())
+        if (dbContext.Users.Any())
         {
             return;
         }
@@ -54,8 +45,8 @@ public class DataService
             PhoneNumber = "(217) 274-4712",
             EmailConfirmed = true
         };
-        await _userManager.CreateAsync(adminUser, "Abc&123!");
-        await _userManager.AddToRoleAsync(adminUser, BlogRole.Administrator.ToString());
+        await userManager.CreateAsync(adminUser, Guid.NewGuid().ToString());
+        await userManager.AddToRoleAsync(adminUser, BlogRole.Administrator.ToString());
         
         BlogUser modUser = new()
         {
@@ -66,7 +57,7 @@ public class DataService
             PhoneNumber = "(217) 274-4712",
             EmailConfirmed = true
         };
-        await _userManager.CreateAsync(modUser, "Abc&123!");
-        await _userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
+        await userManager.CreateAsync(modUser, Guid.NewGuid().ToString());
+        await userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
     }
 }

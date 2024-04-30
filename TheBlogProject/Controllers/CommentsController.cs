@@ -10,19 +10,12 @@ using TheBlogProject.Models;
 
 namespace TheBlogProject.Controllers
 {
-    public class CommentsController : Controller
+    public class CommentsController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public CommentsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Comments.Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post);
+            var applicationDbContext = context.Comments.Include(c => c.BlogUser).Include(c => c.Moderator).Include(c => c.Post);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -34,7 +27,7 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comments
+            var comment = await context.Comments
                 .Include(c => c.BlogUser)
                 .Include(c => c.Moderator)
                 .Include(c => c.Post)
@@ -50,9 +43,9 @@ namespace TheBlogProject.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract");
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id");
+            ViewData["ModeratorId"] = new SelectList(context.Users, "Id", "Id");
+            ViewData["PostId"] = new SelectList(context.Posts, "Id", "Abstract");
             return View();
         }
 
@@ -65,13 +58,13 @@ namespace TheBlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
+                context.Add(comment);
+                await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", comment.BlogUserId);
-            ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", comment.PostId);
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", comment.BlogUserId);
+            ViewData["ModeratorId"] = new SelectList(context.Users, "Id", "Id", comment.ModeratorId);
+            ViewData["PostId"] = new SelectList(context.Posts, "Id", "Abstract", comment.PostId);
             return View(comment);
         }
 
@@ -83,14 +76,14 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await context.Comments.FindAsync(id);
             if (comment == null)
             {
                 return NotFound();
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", comment.BlogUserId);
-            ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", comment.PostId);
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", comment.BlogUserId);
+            ViewData["ModeratorId"] = new SelectList(context.Users, "Id", "Id", comment.ModeratorId);
+            ViewData["PostId"] = new SelectList(context.Posts, "Id", "Abstract", comment.PostId);
             return View(comment);
         }
 
@@ -110,8 +103,8 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    _context.Update(comment);
-                    await _context.SaveChangesAsync();
+                    context.Update(comment);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -126,9 +119,9 @@ namespace TheBlogProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", comment.BlogUserId);
-            ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", comment.PostId);
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", comment.BlogUserId);
+            ViewData["ModeratorId"] = new SelectList(context.Users, "Id", "Id", comment.ModeratorId);
+            ViewData["PostId"] = new SelectList(context.Posts, "Id", "Abstract", comment.PostId);
             return View(comment);
         }
 
@@ -140,7 +133,7 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comments
+            var comment = await context.Comments
                 .Include(c => c.BlogUser)
                 .Include(c => c.Moderator)
                 .Include(c => c.Post)
@@ -158,19 +151,19 @@ namespace TheBlogProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await context.Comments.FindAsync(id);
             if (comment != null)
             {
-                _context.Comments.Remove(comment);
+                context.Comments.Remove(comment);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CommentExists(int id)
         {
-            return _context.Comments.Any(e => e.Id == id);
+            return context.Comments.Any(e => e.Id == id);
         }
     }
 }

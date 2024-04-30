@@ -10,19 +10,12 @@ using TheBlogProject.Models;
 
 namespace TheBlogProject.Controllers
 {
-    public class BlogsController : Controller
+    public class BlogsController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public BlogsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Blogs.Include(b => b.BlogUser);
+            var applicationDbContext = context.Blogs.Include(b => b.BlogUser);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -34,7 +27,7 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
+            var blog = await context.Blogs
                 .Include(b => b.BlogUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
@@ -60,11 +53,11 @@ namespace TheBlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
+                context.Add(blog);
+                await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);
         }
 
@@ -76,7 +69,7 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blogs.FindAsync(id);
+            var blog = await context.Blogs.FindAsync(id);
             if (blog == null)
             {
                 return NotFound();
@@ -100,8 +93,8 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    context.Update(blog);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -116,7 +109,7 @@ namespace TheBlogProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
+            ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", blog.BlogUserId);
             return View(blog);
         }
 
@@ -128,7 +121,7 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
+            var blog = await context.Blogs
                 .Include(b => b.BlogUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
@@ -144,19 +137,19 @@ namespace TheBlogProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
+            var blog = await context.Blogs.FindAsync(id);
             if (blog != null)
             {
-                _context.Blogs.Remove(blog);
+                context.Blogs.Remove(blog);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BlogExists(int id)
         {
-            return _context.Blogs.Any(e => e.Id == id);
+            return context.Blogs.Any(e => e.Id == id);
         }
     }
 }

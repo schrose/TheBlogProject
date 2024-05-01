@@ -1,3 +1,7 @@
+@using TheBlogProject.Services
+
+@inject IImageService imageService
+@using TheBlogProject.Services
 @model IEnumerable<TheBlogProject.Models.Blog>
 
 @{
@@ -28,12 +32,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.ImageData)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BlogUser)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -53,13 +51,7 @@
                 @Html.DisplayFor(modelItem => blog.Updated)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => blog.ImageData)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => blog.ImageType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => blog.BlogUser.Id)
+                <img src="@imageService.DecodeImage(blog.ImageData, blog.ImageType)" alt="unknown"/>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@blog.Id">Edit</a> |

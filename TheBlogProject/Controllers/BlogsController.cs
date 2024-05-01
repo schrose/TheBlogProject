@@ -2,15 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
 
 namespace TheBlogProject.Controllers
 {
-    public class BlogsController(ApplicationDbContext context) : Controller
+    public class BlogsController(
+        ApplicationDbContext context, 
+        IImageService imageService, 
+        UserManager<BlogUser> userManager) : Controller
     {
         // GET: Blogs
         public async Task<IActionResult> Index()
@@ -39,6 +45,7 @@ namespace TheBlogProject.Controllers
         }
 
         // GET: Blogs/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -53,8 +60,13 @@ namespace TheBlogProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                blog.Created = DateTime.Now;
+                blog.BlogUserId = userManager.GetUserId(User);
+                blog.ImageData = await imageService.EncodeImageAsync(blog.Image);
+                blog.ImageType = imageService.ImageType(blog.Image);
                 context.Add(blog);
                 await context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BlogUserId"] = new SelectList(context.Users, "Id", "Id", blog.BlogUserId);

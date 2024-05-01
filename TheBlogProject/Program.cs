@@ -26,6 +26,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<DataService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ISlugService, SlugService>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("AuthMessageSenderOptions"));
 
 

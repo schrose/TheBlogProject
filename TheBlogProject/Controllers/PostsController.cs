@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
 
 namespace TheBlogProject.Controllers
 {
-    public class PostsController(ApplicationDbContext context) : Controller
+    public class PostsController(ApplicationDbContext context, ISlugService slugService) : Controller
     {
         // GET: Posts
         public async Task<IActionResult> Index()
@@ -52,11 +53,20 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post)
+        public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (ModelState.IsValid)
             {
                 post.Created = DateTime.Now;
+                var slug = slugService.UrlFriendly(post.Title);
+                if (!slugService.IsUnique(slug))
+                {
+                    ModelState.AddModelError("Title", "The Title your provided cannot be used as it result in a duplicate slug");
+                    ViewData["TagValues"] = string.Join(",", tagValues);
+                    return View(post);
+                }
+                post.Slug = slug;
+                
                 context.Add(post);
                 await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

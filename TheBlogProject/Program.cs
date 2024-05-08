@@ -31,12 +31,12 @@ builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSe
 
 
 var app = builder.Build();
+//Pull out my registered DataService
 var dataService = app.Services
     .CreateScope()
     .ServiceProvider
     .GetRequiredService<DataService>();
 await dataService.ManageDataAsync(); 
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

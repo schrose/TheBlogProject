@@ -1,6 +1,6 @@
 @using TheBlogProject.Services
 
-@inject IImageService imageService
+@inject IImageService ImageService
 @using TheBlogProject.Services
 @model IEnumerable<TheBlogProject.Models.Blog>
 
@@ -51,7 +51,7 @@
                 @Html.DisplayFor(modelItem => blog.Updated)
             </td>
             <td>
-                <img src="@imageService.DecodeImage(blog.ImageData, blog.ImageType)" alt="unknown"/>
+                <img class="img-fluid" width="200px;" src="@ImageService.DecodeImage(blog.ImageData, blog.ImageType)" alt="unknown"/>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@blog.Id">Edit</a> |

@@ -34,7 +34,7 @@ public class MailService(IOptions<AuthMessageSenderOptions> optionsAccessor, ICo
                 {
                     From = new EmailAddress(config.GetSection("SendGrid").GetSection("SenderEmail").Value),
                     Subject = subject,
-                    PlainTextContent = htmlMessage,
+                    PlainTextContent = Regex.Replace(htmlMessage, "<[^>]*>", ""),
                     HtmlContent = htmlMessage
                 };
                 msg.AddTo(new EmailAddress(email));

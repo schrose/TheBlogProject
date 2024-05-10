@@ -32,13 +32,17 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         // private readonly IEmailSender _emailSender;
         private readonly IMailService _emailSender;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _configuration;
 
         public RegisterModel(
             UserManager<BlogUser> userManager,
             IUserStore<BlogUser> userStore,
             SignInManager<BlogUser> signInManager,
             ILogger<RegisterModel> logger,
-            IMailService emailSender)
+            IMailService emailSender, 
+            IImageService imageService, 
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -46,6 +50,8 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _imageService = imageService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -73,10 +79,14 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
+            
             [Required]
             [StringLength(50,ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
+            
             [Required]
             [StringLength(50,ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
             [Display(Name = "Last Name")]
@@ -90,7 +100,7 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
-
+            
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -126,6 +136,14 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                user.UserName = Input.Email;
+                user.Email = Input.Email;
+                user.ImageData = (await _imageService.EncodeImageAsync(Input.ImageFile)) ??
+                                 await _imageService.EncodeImageAsync(_configuration["DefaultUserImage"]);
+                user.ContentType = Input.ImageFile is null
+                    ? Path.GetExtension(_configuration["DefaultUserImage"])
+                    : _imageService.ImageType(Input.ImageFile);
+                
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ namespace TheBlogProject.Controllers
     public class PostsController(
         ApplicationDbContext context, 
         ISlugService slugService, 
-        IImageService imageService) : Controller
+        IImageService imageService,
+        UserManager<BlogUser> userManager) : Controller
     {
         // GET: Posts
         public async Task<IActionResult> Index()
@@ -61,6 +63,9 @@ namespace TheBlogProject.Controllers
             if (ModelState.IsValid)
             {
                 post.Created = DateTime.Now;
+
+                var authorId = userManager.GetUserId(User);
+                post.BlogUserId = authorId;
                 
                 post.ImageData = await imageService.EncodeImageAsync(post.Image);
                 post.ImageType = imageService.ImageType(post.Image);
@@ -75,6 +80,17 @@ namespace TheBlogProject.Controllers
                 post.Slug = slug;
                 
                 context.Add(post);
+                
+                //How do I loop over the incoming list of string?
+                foreach (var tag in tagValues)
+                {
+                    context.Add(new Tag()
+                    {
+                        PostId = post.Id,
+                        BlogUserId = authorId,
+                        Text = tag
+                    });
+                }
                 await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

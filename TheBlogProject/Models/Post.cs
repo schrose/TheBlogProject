@@ -7,6 +7,8 @@ namespace TheBlogProject.Models;
 
 public class Post
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [Display(Name = "Blog Name")] 

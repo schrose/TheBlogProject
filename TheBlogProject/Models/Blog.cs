@@ -6,6 +6,8 @@ namespace TheBlogProject.Models;
 
 public class Blog
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string BlogUserId { get; set; }
     

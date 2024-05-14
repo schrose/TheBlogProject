@@ -81,6 +81,7 @@ namespace TheBlogProject.Controllers
                 post.Slug = slug;
                 
                 context.Add(post);
+                await context.SaveChangesAsync();
                 
                 //How do I loop over the incoming list of string?
                 foreach (var tag in tagValues)

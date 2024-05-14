@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-8">
-        <form asp-action="Create" onsubmit="handleSubmit()" enctype="multipart/form-data">
+        <form id="form" asp-action="Create" onsubmit="handleSubmit()" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="BlogId" class="control-label"></label>
@@ -82,7 +82,7 @@
 </div>
 
 @section Scripts{
-<script src="/js/custom.js"></script>
+<script src="~/js/Custom.js"></script>
 
 <script>
     let quill = new Quill('#content', {

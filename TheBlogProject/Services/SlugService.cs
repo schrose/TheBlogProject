@@ -3,11 +3,11 @@ using TheBlogProject.Data;
 
 namespace TheBlogProject.Services;
 
-public class SlugService(ApplicationDbContext applicationDbContext) : ISlugService
+public class SlugService(ApplicationDbContext context) : ISlugService
 {
     public bool IsUnique(string slug)
     {
-        return !applicationDbContext.Posts.Any(p => p.Slug == slug);
+        return !context.Posts.Any(p => p.Slug == slug);
     }
 
     public string UrlFriendly(string title)

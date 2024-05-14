@@ -26,9 +26,9 @@ namespace TheBlogProject.Controllers
         }
 
         // GET: Posts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string slug)
         {
-            if (id == null)
+            if (slug == null)
             {
                 return NotFound();
             }
@@ -37,7 +37,7 @@ namespace TheBlogProject.Controllers
                 .Include(p => p.Blog)
                 .Include(p => p.BlogUser)
                 .Include(p => p.Tags)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
                 return NotFound();
@@ -196,6 +196,13 @@ namespace TheBlogProject.Controllers
             if (post != null)
             {
                 context.Posts.Remove(post);
+                
+                List<Tag> tagsToDelete = context.Tags.Where(t => t.PostId == id).ToList();
+                
+                foreach (var tag in tagsToDelete)
+                {
+                    context.Tags.Remove(tag);
+                }
             }
 
             await context.SaveChangesAsync();

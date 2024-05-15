@@ -108,12 +108,16 @@ namespace TheBlogProject.Controllers
                 return NotFound();
             }
 
-            var post = await context.Posts.FindAsync(id);
+            var post = await context.Posts
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
             ViewData["BlogId"] = new SelectList(context.Blogs, "Id", "Name", post.BlogId);
+            ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
+            
             return View(post);
         }
 
@@ -122,7 +126,7 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile newImage)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile newImage, List<string> tagValues)
         {
             if (id != post.Id)
             {
@@ -133,7 +137,9 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    var newPost = await context.Posts.FindAsync(post.Id);
+                    var newPost = await context.Posts
+                        .Include(p => p.Tags)
+                        .FirstOrDefaultAsync(p => p.Id == post.Id);
                     
                     newPost.Updated = DateTime.Now;
                     newPost.Title = post.Title;
@@ -145,6 +151,20 @@ namespace TheBlogProject.Controllers
                     {
                         newPost.ImageData = await imageService.EncodeImageAsync(newImage);
                         newPost.ImageType = imageService.ImageType(newImage);
+                    }
+                    
+                    // Remove all Tags previously associated with this Post
+                    context.Tags.RemoveRange(newPost.Tags);
+                    
+                    // Add in the new Tags from the Edit form
+                    foreach (var tagText in tagValues)
+                    {
+                        context.Add(new Tag()
+                        {
+                            PostId = post.Id,
+                            BlogUserId = newPost.BlogUserId,
+                            Text = tagText
+                        });
                     }
                     
                     await context.SaveChangesAsync();

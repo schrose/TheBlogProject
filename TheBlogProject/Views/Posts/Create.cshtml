@@ -84,15 +84,18 @@
 </div>
 
 @section Scripts{
-<script src="~/js/Custom.js"></script>
+    
+    <script>
+        let tagValues = '@ViewData["TagValues"]';
+        let quill = new Quill('#content', {
+            theme: 'snow'
+        });
+        function handleSubmit(){
+            console.info('handleSubmit called');
+            document.getElementById('jdr').value = quill.root.innerHTML;
+        }
+    </script>
 
-<script>
-    let quill = new Quill('#content', {
-        theme: 'snow'
-    });
-    function handleSubmit(){
-        console.info('handleSubmit called');
-        document.getElementById('jdr').value = quill.root.innerHTML;
-    }
-</script>
+    <script src="~/js/Custom.js"></script>
+
 }

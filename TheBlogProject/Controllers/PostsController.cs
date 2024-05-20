@@ -72,12 +72,28 @@ namespace TheBlogProject.Controllers
                 post.ImageType = imageService.ImageType(post.Image);
                 
                 var slug = slugService.UrlFriendly(post.Title);
+                // Create a variable to store whether an error has occurred
+                var validationError = false;
+                
+                if (string.IsNullOrEmpty(slug))
+                {
+                    validationError = true;
+                    ModelState.AddModelError("","The Title you provided can not be used as it results in an empty slug.");
+                }
+                
+                // Detect incoming duplicate Slugs
                 if (!slugService.IsUnique(slug))
                 {
-                    ModelState.AddModelError("Title", "The Title your provided cannot be used as it result in a duplicate slug");
+                    validationError = true;
+                    ModelState.AddModelError("Title","The Title your provided cannot be used as it result in a duplicate slug");
+                }
+
+                if (validationError)
+                {
                     ViewData["TagValues"] = string.Join(",", tagValues);
                     return View(post);
                 }
+
                 post.Slug = slug;
                 
                 context.Add(post);

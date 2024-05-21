@@ -85,7 +85,7 @@ namespace TheBlogProject.Controllers
                 if (!slugService.IsUnique(slug))
                 {
                     validationError = true;
-                    ModelState.AddModelError("Title","The Title your provided cannot be used as it result in a duplicate slug");
+                    ModelState.AddModelError("Title","The Title your provided cannot be used as it result in a duplicate slug.");
                 }
 
                 if (validationError)
@@ -153,24 +153,41 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    var newPost = await context.Posts
+                    
+                    var originalPost = await context.Posts
                         .Include(p => p.Tags)
                         .FirstOrDefaultAsync(p => p.Id == post.Id);
                     
-                    newPost.Updated = DateTime.Now;
-                    newPost.Title = post.Title;
-                    newPost.Abstract = post.Abstract;
-                    newPost.Content = post.Content;
-                    newPost.ReadyStatus = post.ReadyStatus;
+                    originalPost.Updated = DateTime.Now;
+                    originalPost.Title = post.Title;
+                    originalPost.Abstract = post.Abstract;
+                    originalPost.Content = post.Content;
+                    originalPost.ReadyStatus = post.ReadyStatus;
+
+                    var newSlug = slugService.UrlFriendly(post.Title);
+                    if (newSlug != originalPost.Slug)
+                    {
+                        if (slugService.IsUnique(newSlug))
+                        {
+                            originalPost.Title = post.Title;
+                            originalPost.Slug = newSlug;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("Title","This Title your provided cannot be used as it result in a duplicate slug.");
+                            ViewData["TagValues"] = string.Join(",", tagValues);
+                            return View(post);
+                        }
+                    }
                     
                     if (newImage is not null)
                     {
-                        newPost.ImageData = await imageService.EncodeImageAsync(newImage);
-                        newPost.ImageType = imageService.ImageType(newImage);
+                        originalPost.ImageData = await imageService.EncodeImageAsync(newImage);
+                        originalPost.ImageType = imageService.ImageType(newImage);
                     }
                     
                     // Remove all Tags previously associated with this Post
-                    context.Tags.RemoveRange(newPost.Tags);
+                    context.Tags.RemoveRange(originalPost.Tags);
                     
                     // Add in the new Tags from the Edit form
                     foreach (var tagText in tagValues)
@@ -178,7 +195,7 @@ namespace TheBlogProject.Controllers
                         context.Add(new Tag()
                         {
                             PostId = post.Id,
-                            BlogUserId = newPost.BlogUserId,
+                            BlogUserId = originalPost.BlogUserId,
                             Text = tagText
                         });
                     }

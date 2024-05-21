@@ -25,7 +25,7 @@ namespace TheBlogProject.Controllers
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(string slug)
         {
-            if (slug == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }

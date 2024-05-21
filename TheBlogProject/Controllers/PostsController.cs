@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -80,14 +77,19 @@ namespace TheBlogProject.Controllers
                     validationError = true;
                     ModelState.AddModelError("","The Title you provided can not be used as it results in an empty slug.");
                 }
-                
                 // Detect incoming duplicate Slugs
-                if (!slugService.IsUnique(slug))
+                else if (!slugService.IsUnique(slug))
                 {
                     validationError = true;
                     ModelState.AddModelError("Title","The Title your provided cannot be used as it result in a duplicate slug.");
                 }
-
+                else if (slug.Contains("test"))
+                {
+                    validationError = true;
+                    ModelState.AddModelError("","Uh-oh are you testing again??");
+                    ModelState.AddModelError("Title","The Title can not contain the word test.");
+                }
+                
                 if (validationError)
                 {
                     ViewData["TagValues"] = string.Join(",", tagValues);

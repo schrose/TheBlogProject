@@ -1,21 +1,41 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TheBlogProject.Data;
+using TheBlogProject.Enums;
 using TheBlogProject.Models;
 using TheBlogProject.Services;
 using TheBlogProject.ViewModels;
+using X.PagedList;
 
 namespace TheBlogProject.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, IMailService mailService) : Controller
+public class HomeController(ApplicationDbContext context, IMailService mailService) : Controller
 {
-    private readonly ILogger<HomeController> _logger = logger;
-    private readonly IMailService _mailService = mailService;
-
-    public IActionResult Index()
+    public async Task<IActionResult> Index(int? page)
     {
-        return View();
+        var pageNumber = page ?? 1;
+        var pageSize = 5;
+
+        var blogs = context.Blogs
+            .Include(b => b.BlogUser)
+            .OrderByDescending(b => b.Created)
+            .ToPagedListAsync(pageNumber, pageSize);
+        
+        return View(await blogs);
     }
 
+    public async Task<IActionResult> BlogPostIndex(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var posts = await context.Posts.Where(p => p.BlogId == id).ToListAsync();
+        return View("Index");
+    }
+    
     public IActionResult About()
     {
         return View();
@@ -32,7 +52,7 @@ public class HomeController(ILogger<HomeController> logger, IMailService mailSer
     {
         //This is where we will be emailing...
         model.Message = $"{model.Message} <hr/> Phone: {model.Phone}";
-        await _mailService.SendContactEmailAsync(model.Email, model.Name,model.Subject, model.Message);
+        await mailService.SendContactEmailAsync(model.Email, model.Name,model.Subject, model.Message);
         return RedirectToAction("Index");
     } 
 

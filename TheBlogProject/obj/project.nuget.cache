@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "L+mmPKzBTWK0N9a8waBLZdZHwlpfRhem4bQbFeLRRncQ9F4kmeMJIPkznw34fy78oMFv1PLJfVcv9+PExh2xMw==",
+  "dgSpecHash": "NZeVDhSim8+xU2jsJWbjmT4KB6Zg6cMKq0FfwRQoNWAjsV11kMp4QLDxgj7Q752r92I4M0zwqshu6/GQDlLFJw==",
   "success": true,
   "projectFilePath": "/Users/seanschroder/Projects/TheBlogProject/TheBlogProject/TheBlogProject.csproj",
   "expectedPackageFiles": [
@@ -182,7 +182,10 @@
     "/Users/seanschroder/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512",
     "/Users/seanschroder/.nuget/packages/system.threading.tasks.dataflow/7.0.0/system.threading.tasks.dataflow.7.0.0.nupkg.sha512",
     "/Users/seanschroder/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "/Users/seanschroder/.nuget/packages/system.windows.extensions/7.0.0/system.windows.extensions.7.0.0.nupkg.sha512"
+    "/Users/seanschroder/.nuget/packages/system.windows.extensions/7.0.0/system.windows.extensions.7.0.0.nupkg.sha512",
+    "/Users/seanschroder/.nuget/packages/x.pagedlist/9.1.2/x.pagedlist.9.1.2.nupkg.sha512",
+    "/Users/seanschroder/.nuget/packages/x.pagedlist.mvc.core/9.1.2/x.pagedlist.mvc.core.9.1.2.nupkg.sha512",
+    "/Users/seanschroder/.nuget/packages/x.pagedlist.web.common/8.0.7/x.pagedlist.web.common.8.0.7.nupkg.sha512"
   ],
   "logs": []
 }

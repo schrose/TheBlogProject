@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
-using TheBlogProject.Enums;
 using TheBlogProject.Models;
 using TheBlogProject.Services;
 using TheBlogProject.ViewModels;
@@ -23,17 +22,6 @@ public class HomeController(ApplicationDbContext context, IMailService mailServi
             .ToPagedListAsync(pageNumber, pageSize);
         
         return View(await blogs);
-    }
-
-    public async Task<IActionResult> BlogPostIndex(int? id)
-    {
-        if (id is null)
-        {
-            return NotFound();
-        }
-
-        var posts = await context.Posts.Where(p => p.BlogId == id).ToListAsync();
-        return View("Index");
     }
     
     public IActionResult About()

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheBlogProject.Data;
+using TheBlogProject.Enums;
 using TheBlogProject.Models;
 using TheBlogProject.Services;
+using X.PagedList;
 
 namespace TheBlogProject.Controllers
 {
@@ -18,10 +20,28 @@ namespace TheBlogProject.Controllers
         // GET: Posts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
+            var applicationDbContext = context.Posts
+                .Include(p => p.Blog)
+                .Include(p => p.BlogUser);
             return View(await applicationDbContext.ToListAsync());
         }
-
+        // BlogPostIndex
+        public async Task<IActionResult> BlogPostIndex(int? id, int? page)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+            
+            var posts = await context.Posts
+                .Where(p => p.BlogId == id && p.ReadyStatus == ReadyStatus.ProductionReady)
+                .OrderByDescending(p => p.Created)
+                .ToPagedListAsync(pageNumber, pageSize);
+            
+            return View(posts);
+        }
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(string slug)
         {

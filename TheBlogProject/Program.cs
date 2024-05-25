@@ -24,6 +24,7 @@ builder.Services.AddControllersWithViews();
 
 // Register custom service classes
 builder.Services.AddScoped<DataService>();
+builder.Services.AddScoped<BlogSearchService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ISlugService, SlugService>();

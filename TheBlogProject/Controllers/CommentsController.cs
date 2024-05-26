@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using TheBlogProject.Models;
 
 namespace TheBlogProject.Controllers
 {
-    public class CommentsController(ApplicationDbContext context) : Controller
+    public class CommentsController(ApplicationDbContext context, UserManager<BlogUser> userManager) : Controller
     {
         // GET: Comments
         public async Task<IActionResult> Index()
@@ -54,10 +55,12 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PostId,BlogUserId,ModeratorId,Body,Created,Updated,Moderated,Deleted,ModeratedBody,ModerationType")] Comment comment)
+        public async Task<IActionResult> Create([Bind("PostId,Body")] Comment comment)
         {
             if (ModelState.IsValid)
             {
+                comment.BlogUserId = userManager.GetUserId(User);
+                comment.Created = DateTime.Now;
                 context.Add(comment);
                 await context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
